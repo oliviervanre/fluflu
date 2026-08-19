@@ -4,6 +4,11 @@ Prototype web mobile d'un journal personnel destiné à rapprocher les aliments 
 
 L'application est un outil d'observation et d'aide-mémoire. Elle ne pose pas de diagnostic et ne remplace pas le suivi médical.
 
+Le dépôt contient désormais deux versions :
+
+- la maquette web, directement à la racine ;
+- l'application Android native Kotlin/Jetpack Compose dans [`android/`](android/README.md).
+
 ## Fonctions du premier prototype
 
 - saisie horodatée d'un aliment, d'une boisson ou d'un repas ;
