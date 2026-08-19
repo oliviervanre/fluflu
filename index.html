@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#173f3a">
+  <meta name="description" content="Journal personnel d'alimentation et de reflux gastriques.">
+  <title>FluFlu — Journal reflux</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Journal personnel</p>
+        <h1>FluFlu</h1>
+      </div>
+      <button class="icon-button" id="openSettings" aria-label="Ouvrir les réglages">•••</button>
+    </header>
+
+    <main>
+      <section class="view active" id="journalView" aria-labelledby="journalTitle">
+        <div class="date-strip">
+          <button class="date-arrow" id="previousDay" aria-label="Jour précédent">‹</button>
+          <div>
+            <p class="section-kicker">Journal</p>
+            <h2 id="journalTitle">Aujourd'hui</h2>
+            <p class="muted" id="selectedDateLabel"></p>
+          </div>
+          <button class="date-arrow" id="nextDay" aria-label="Jour suivant">›</button>
+        </div>
+
+        <div class="quick-actions">
+          <button class="action-card food-action" data-open-dialog="foodDialog">
+            <span class="action-icon" aria-hidden="true">＋</span>
+            <span><strong>Ajouter un aliment</strong><small>Repas, boisson ou collation</small></span>
+          </button>
+          <button class="action-card symptom-action" data-open-dialog="symptomDialog">
+            <span class="action-icon" aria-hidden="true">＋</span>
+            <span><strong>Signaler un reflux</strong><small>Intensité et contexte</small></span>
+          </button>
+        </div>
+
+        <div class="section-heading">
+          <h3>Chronologie</h3>
+          <span class="count-badge" id="entryCount">0 saisie</span>
+        </div>
+        <div class="timeline" id="timeline"></div>
+      </section>
+
+      <section class="view" id="analysisView" aria-labelledby="analysisTitle">
+        <div class="page-heading">
+          <p class="section-kicker">Observations</p>
+          <h2 id="analysisTitle">Aliments à surveiller</h2>
+          <p>Associations observées entre une consommation et un reflux ultérieur. Ce classement ne constitue pas un diagnostic.</p>
+        </div>
+
+        <div class="window-picker" role="group" aria-label="Fenêtre d'observation">
+          <button data-window="1">1 h</button>
+          <button class="active" data-window="3">3 h</button>
+          <button data-window="6">6 h</button>
+        </div>
+
+        <div class="quality-card" id="qualityCard"></div>
+        <div class="analysis-list" id="analysisList"></div>
+        <details class="method-note">
+          <summary>Comment lire ces résultats ?</summary>
+          <p>Le taux correspond à la part des consommations suivies d'au moins un reflux dans la fenêtre choisie. L'intensité moyenne permet de nuancer le résultat. Une association répétée mérite d'être observée ; elle ne démontre pas un lien de causalité.</p>
+        </details>
+      </section>
+
+      <section class="view" id="historyView" aria-labelledby="historyTitle">
+        <div class="page-heading">
+          <p class="section-kicker">Vue d'ensemble</p>
+          <h2 id="historyTitle">Historique</h2>
+          <p>Les journées renseignées, du plus récent au plus ancien.</p>
+        </div>
+        <div class="history-list" id="historyList"></div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Navigation principale">
+      <button class="active" data-view="journalView"><span aria-hidden="true">◷</span>Journal</button>
+      <button data-view="analysisView"><span aria-hidden="true">⌁</span>Analyse</button>
+      <button data-view="historyView"><span aria-hidden="true">▤</span>Historique</button>
+    </nav>
+  </div>
+
+  <dialog id="foodDialog">
+    <form method="dialog" id="foodForm">
+      <div class="dialog-header">
+        <div><p class="section-kicker">Nouvelle saisie</p><h2>Aliment consommé</h2></div>
+        <button class="close-button" type="button" data-close-dialog aria-label="Fermer">×</button>
+      </div>
+
+      <label>Aliment ou boisson
+        <input id="foodName" name="foodName" required autocomplete="off" placeholder="Ex. café, tomate, pain…">
+      </label>
+      <div class="suggestions" id="foodSuggestions" aria-label="Suggestions"></div>
+      <label>Moment de consommation
+        <input id="foodDateTime" name="foodDateTime" type="datetime-local" required>
+      </label>
+      <label>Type de prise
+        <select id="mealType" name="mealType">
+          <option>Petit-déjeuner</option>
+          <option>Déjeuner</option>
+          <option>Dîner</option>
+          <option>Collation</option>
+          <option>Boisson</option>
+          <option selected>Non précisé</option>
+        </select>
+      </label>
+      <label>Quantité approximative <span class="optional">facultatif</span>
+        <input id="foodQuantity" name="foodQuantity" placeholder="Ex. 1 tasse, petite portion">
+      </label>
+      <label>Note <span class="optional">facultatif</span>
+        <textarea id="foodNote" name="foodNote" rows="2" placeholder="Préparation, sauce, particularité…"></textarea>
+      </label>
+      <button class="primary-button" value="default" type="submit">Enregistrer l'aliment</button>
+    </form>
+  </dialog>
+
+  <dialog id="symptomDialog">
+    <form method="dialog" id="symptomForm">
+      <div class="dialog-header">
+        <div><p class="section-kicker">Nouvelle saisie</p><h2>Épisode de reflux</h2></div>
+        <button class="close-button" type="button" data-close-dialog aria-label="Fermer">×</button>
+      </div>
+
+      <label>Moment d'apparition
+        <input id="symptomDateTime" name="symptomDateTime" type="datetime-local" required>
+      </label>
+      <fieldset>
+        <legend>Intensité ressentie</legend>
+        <div class="intensity-picker">
+          <label><input type="radio" name="intensity" value="1" required><span>1<small>Léger</small></span></label>
+          <label><input type="radio" name="intensity" value="2"><span>2<small>Modéré</small></span></label>
+          <label><input type="radio" name="intensity" value="3"><span>3<small>Fort</small></span></label>
+          <label><input type="radio" name="intensity" value="4"><span>4<small>Très fort</small></span></label>
+        </div>
+      </fieldset>
+
+      <p class="context-intro">Contexte dans les deux heures précédentes</p>
+      <div class="context-questions" id="contextQuestions"></div>
+
+      <label>Note <span class="optional">facultatif</span>
+        <textarea id="symptomNote" name="symptomNote" rows="2" placeholder="Sensation, durée, circonstance…"></textarea>
+      </label>
+      <button class="primary-button danger" value="default" type="submit">Enregistrer le reflux</button>
+    </form>
+  </dialog>
+
+  <dialog id="settingsDialog" class="settings-dialog">
+    <form method="dialog">
+      <div class="dialog-header">
+        <div><p class="section-kicker">Prototype</p><h2>Données</h2></div>
+        <button class="close-button" type="button" data-close-dialog aria-label="Fermer">×</button>
+      </div>
+      <p class="muted">Les données restent uniquement dans ce navigateur.</p>
+      <button type="button" class="secondary-button" id="loadDemo">Charger les données de démonstration</button>
+      <button type="button" class="secondary-button destructive" id="clearData">Effacer toutes les données</button>
+    </form>
+  </dialog>
+
+  <template id="emptyTimelineTemplate">
+    <div class="empty-state">
+      <div class="empty-icon">◷</div>
+      <h3>Aucune saisie ce jour</h3>
+      <p>Ajoutez un aliment ou signalez un reflux pour commencer le journal.</p>
+    </div>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
