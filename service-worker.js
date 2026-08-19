@@ -1,4 +1,4 @@
-const CACHE = "fluflu-v1";
+const CACHE = "fluflu-v2";
 const ASSETS = ["./", "./index.html", "./styles.css", "./app.js", "./manifest.webmanifest"];
 
 self.addEventListener("install", event => {
