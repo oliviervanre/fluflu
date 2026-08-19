@@ -14,6 +14,12 @@ let analysisWindow = 3;
 const $ = (selector, parent = document) => parent.querySelector(selector);
 const $$ = (selector, parent = document) => [...parent.querySelectorAll(selector)];
 
+function makeId() {
+  if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID();
+  const randomPart = Math.random().toString(36).slice(2, 10);
+  return `${Date.now().toString(36)}-${randomPart}`;
+}
+
 function loadEntries() {
   try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
   catch { return []; }
@@ -240,7 +246,7 @@ $("#foodForm").addEventListener("submit", event => {
   event.preventDefault();
   if (!event.currentTarget.reportValidity()) return;
   entries.push({
-    id: crypto.randomUUID(), type: "food", name: $("#foodName").value.trim(),
+    id: makeId(), type: "food", name: $("#foodName").value.trim(),
     at: new Date($("#foodDateTime").value).toISOString(), mealType: $("#mealType").value,
     quantity: $("#foodQuantity").value.trim(), note: $("#foodNote").value.trim()
   });
@@ -255,7 +261,7 @@ $("#symptomForm").addEventListener("submit", event => {
   if (!event.currentTarget.reportValidity()) return;
   const context = Object.fromEntries(CONTEXTS.map(({ key }) => [key, $(`input[name='context-${key}']:checked`).value]));
   entries.push({
-    id: crypto.randomUUID(), type: "symptom", at: new Date($("#symptomDateTime").value).toISOString(),
+    id: makeId(), type: "symptom", at: new Date($("#symptomDateTime").value).toISOString(),
     intensity: Number($("input[name='intensity']:checked").value), context,
     note: $("#symptomNote").value.trim()
   });
@@ -277,17 +283,17 @@ $("#loadDemo").addEventListener("click", () => {
   const now = new Date();
   const at = (daysAgo, hour, minute = 0) => { const d = new Date(now); d.setDate(d.getDate() - daysAgo); d.setHours(hour, minute, 0, 0); return d.toISOString(); };
   entries = [
-    { id: crypto.randomUUID(), type:"food", name:"Café", at:at(4,8,10), mealType:"Petit-déjeuner", quantity:"1 tasse", note:"" },
-    { id: crypto.randomUUID(), type:"food", name:"Pain", at:at(4,8,12), mealType:"Petit-déjeuner", quantity:"2 tranches", note:"" },
-    { id: crypto.randomUUID(), type:"symptom", at:at(4,10,5), intensity:2, context:{lying:"no",activity:"no",stress:"yes",medication:"unknown",alcohol:"no"}, note:"Brûlure légère" },
-    { id: crypto.randomUUID(), type:"food", name:"Tomate", at:at(3,12,35), mealType:"Déjeuner", quantity:"1 portion", note:"En salade" },
-    { id: crypto.randomUUID(), type:"symptom", at:at(3,14,10), intensity:3, context:{lying:"no",activity:"no",stress:"no",medication:"no",alcohol:"no"}, note:"" },
-    { id: crypto.randomUUID(), type:"food", name:"Café", at:at(2,9,5), mealType:"Petit-déjeuner", quantity:"1 tasse", note:"" },
-    { id: crypto.randomUUID(), type:"food", name:"Chocolat", at:at(2,16,20), mealType:"Collation", quantity:"3 carrés", note:"" },
-    { id: crypto.randomUUID(), type:"symptom", at:at(2,18,0), intensity:2, context:{lying:"yes",activity:"no",stress:"unknown",medication:"no",alcohol:"no"}, note:"Après repos sur le canapé" },
-    { id: crypto.randomUUID(), type:"food", name:"Tomate", at:at(1,19,40), mealType:"Dîner", quantity:"1 portion", note:"Sauce tomate" },
-    { id: crypto.randomUUID(), type:"symptom", at:at(1,22,5), intensity:4, context:{lying:"yes",activity:"no",stress:"no",medication:"no",alcohol:"no"}, note:"Reflux important au coucher" },
-    { id: crypto.randomUUID(), type:"food", name:"Banane", at:at(0,8,15), mealType:"Petit-déjeuner", quantity:"1", note:"" }
+    { id: makeId(), type:"food", name:"Café", at:at(4,8,10), mealType:"Petit-déjeuner", quantity:"1 tasse", note:"" },
+    { id: makeId(), type:"food", name:"Pain", at:at(4,8,12), mealType:"Petit-déjeuner", quantity:"2 tranches", note:"" },
+    { id: makeId(), type:"symptom", at:at(4,10,5), intensity:2, context:{lying:"no",activity:"no",stress:"yes",medication:"unknown",alcohol:"no"}, note:"Brûlure légère" },
+    { id: makeId(), type:"food", name:"Tomate", at:at(3,12,35), mealType:"Déjeuner", quantity:"1 portion", note:"En salade" },
+    { id: makeId(), type:"symptom", at:at(3,14,10), intensity:3, context:{lying:"no",activity:"no",stress:"no",medication:"no",alcohol:"no"}, note:"" },
+    { id: makeId(), type:"food", name:"Café", at:at(2,9,5), mealType:"Petit-déjeuner", quantity:"1 tasse", note:"" },
+    { id: makeId(), type:"food", name:"Chocolat", at:at(2,16,20), mealType:"Collation", quantity:"3 carrés", note:"" },
+    { id: makeId(), type:"symptom", at:at(2,18,0), intensity:2, context:{lying:"yes",activity:"no",stress:"unknown",medication:"no",alcohol:"no"}, note:"Après repos sur le canapé" },
+    { id: makeId(), type:"food", name:"Tomate", at:at(1,19,40), mealType:"Dîner", quantity:"1 portion", note:"Sauce tomate" },
+    { id: makeId(), type:"symptom", at:at(1,22,5), intensity:4, context:{lying:"yes",activity:"no",stress:"no",medication:"no",alcohol:"no"}, note:"Reflux important au coucher" },
+    { id: makeId(), type:"food", name:"Banane", at:at(0,8,15), mealType:"Petit-déjeuner", quantity:"1", note:"" }
   ];
   selectedDate = dayKey(new Date());
   $("#settingsDialog").close(); saveEntries();
