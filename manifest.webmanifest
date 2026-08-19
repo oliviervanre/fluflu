@@ -1,0 +1,11 @@
+{
+  "name": "FluFlu — Journal reflux",
+  "short_name": "FluFlu",
+  "description": "Journal personnel d'alimentation et de reflux gastriques.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#fbfcf8",
+  "theme_color": "#173f3a",
+  "lang": "fr",
+  "icons": []
+}
