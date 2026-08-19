@@ -20,7 +20,7 @@ button { color: inherit; }
 .app-shell { width: min(100%, 500px); min-height: 100vh; margin: 0 auto; background: var(--paper); box-shadow: 0 0 50px rgba(20, 48, 44, .10); padding-bottom: 92px; }
 
 .topbar { display: flex; align-items: center; justify-content: space-between; padding: calc(18px + env(safe-area-inset-top)) 22px 14px; background: var(--green); color: white; }
-.topbar h1 { margin: 0; font-family: Georgia, serif; font-size: 28px; letter-spacing: -.5px; }
+.topbar h1 { margin: 0; font-size: 27px; font-weight: 750; letter-spacing: -.7px; }
 .eyebrow, .section-kicker { margin: 0 0 3px; font-size: 11px; font-weight: 800; letter-spacing: .11em; text-transform: uppercase; }
 .eyebrow { color: #b9d9d1; }
 .icon-button, .date-arrow, .close-button { border: 0; background: transparent; cursor: pointer; }
@@ -29,7 +29,7 @@ button { color: inherit; }
 .view { display: none; padding: 22px 20px 18px; }
 .view.active { display: block; }
 .date-strip { display: grid; grid-template-columns: 42px 1fr 42px; align-items: center; text-align: center; }
-.date-strip h2, .page-heading h2 { margin: 1px 0 2px; font-family: Georgia, serif; font-size: 27px; }
+.date-strip h2, .page-heading h2 { margin: 1px 0 2px; font-size: 25px; font-weight: 750; letter-spacing: -.55px; }
 .date-arrow { width: 40px; height: 40px; border-radius: 50%; background: var(--surface); border: 1px solid var(--line); font-size: 28px; line-height: 1; }
 .date-arrow:disabled { opacity: .25; }
 .section-kicker { color: var(--green); }
@@ -103,7 +103,7 @@ dialog { width: min(calc(100% - 22px), 470px); max-height: calc(100vh - 24px); p
 dialog::backdrop { background: rgba(14, 35, 32, .55); backdrop-filter: blur(2px); }
 dialog form { display: grid; gap: 15px; padding: 21px; }
 .dialog-header { display: flex; align-items: start; justify-content: space-between; }
-.dialog-header h2 { margin: 1px 0 0; font-family: Georgia, serif; font-size: 24px; }
+.dialog-header h2 { margin: 1px 0 0; font-size: 23px; font-weight: 750; letter-spacing: -.45px; }
 .close-button { width: 38px; height: 38px; color: var(--muted); font-size: 28px; }
 label, legend { color: #354b47; font-size: 12px; font-weight: 700; }
 input, select, textarea { width: 100%; margin-top: 6px; padding: 12px 13px; border: 1px solid #cbd7d3; border-radius: 11px; outline: none; color: var(--ink); background: white; }
