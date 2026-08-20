@@ -1,6 +1,7 @@
 package fr.claynum.fluflu.ui
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -23,6 +24,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import fr.claynum.fluflu.ui.components.FoodDialog
+import fr.claynum.fluflu.ui.components.ProfileSettingsDialog
+import fr.claynum.fluflu.ui.components.ProfileSetupDialog
+import fr.claynum.fluflu.ui.components.RenameProfileDialog
 import fr.claynum.fluflu.ui.components.SymptomDialog
 import fr.claynum.fluflu.ui.screens.HistoryScreen
 import fr.claynum.fluflu.ui.screens.JournalScreen
@@ -47,12 +51,22 @@ fun FluFluApp(viewModel: MainViewModel) {
     var showFood by remember { mutableStateOf(false) }
     var showSymptom by remember { mutableStateOf(false) }
     var showSettings by remember { mutableStateOf(false) }
+    var showRename by remember { mutableStateOf(false) }
+    var showDemoConfirmation by remember { mutableStateOf(false) }
+    var showClearConfirmation by remember { mutableStateOf(false) }
+    val activeProfile = viewModel.activeProfile
+    val activeEntries = viewModel.activeEntries
 
     Scaffold(
         containerColor = Paper,
         topBar = {
             TopAppBar(
-                title = { Text("FluFlu", fontWeight = FontWeight.Bold) },
+                title = {
+                    Column {
+                        Text("FluFlu", fontWeight = FontWeight.Bold)
+                        activeProfile?.let { Text(it.firstName, style = MaterialTheme.typography.labelSmall) }
+                    }
+                },
                 actions = { TextButton(onClick = { showSettings = true }) { Text("•••", color = Color.White) } },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = GreenDark,
@@ -84,9 +98,9 @@ fun FluFluApp(viewModel: MainViewModel) {
                     onAddSymptom = { showSymptom = true },
                     onDelete = viewModel::delete
                 )
-                AppScreen.OBSERVATIONS -> ObservationsScreen(viewModel.entries)
+                AppScreen.OBSERVATIONS -> ObservationsScreen(activeEntries)
                 AppScreen.HISTORY -> HistoryScreen(
-                    entries = viewModel.entries,
+                    entries = activeEntries,
                     onSelectDay = { date -> selectedDay = date.toEpochDay(); screenName = AppScreen.JOURNAL.name }
                 )
             }
@@ -95,7 +109,7 @@ fun FluFluApp(viewModel: MainViewModel) {
 
     if (showFood) {
         FoodDialog(
-            recentFoods = viewModel.entries.mapNotNull { it.name.takeIf(String::isNotBlank) }.distinct().takeLast(5).reversed(),
+            recentFoods = activeEntries.mapNotNull { it.name.takeIf(String::isNotBlank) }.distinct().takeLast(5).reversed(),
             onDismiss = { showFood = false },
             onSave = { name, at, meal, quantity, note ->
                 viewModel.addFood(name, at, meal, quantity, note)
@@ -114,16 +128,52 @@ fun FluFluApp(viewModel: MainViewModel) {
             }
         )
     }
-    if (showSettings) {
+    if (viewModel.needsProfileSetup) {
+        ProfileSetupDialog(onCreate = viewModel::createPersonalProfile)
+    }
+    if (showSettings && activeProfile != null) {
+        ProfileSettingsDialog(
+            activeProfile = activeProfile,
+            profiles = viewModel.profiles,
+            onSelectProfile = viewModel::selectProfile,
+            onRename = { showSettings = false; showRename = true },
+            onLoadDemo = { showSettings = false; showDemoConfirmation = true },
+            onClear = { showSettings = false; showClearConfirmation = true },
+            onDismiss = { showSettings = false }
+        )
+    }
+    if (showRename && activeProfile != null) {
+        RenameProfileDialog(
+            currentName = activeProfile.firstName,
+            onSave = { viewModel.renameActiveProfile(it); showRename = false },
+            onDismiss = { showRename = false }
+        )
+    }
+    if (showDemoConfirmation) {
         AlertDialog(
-            onDismissRequest = { showSettings = false },
-            title = { Text("Données du prototype") },
-            text = { Text("Les saisies restent uniquement sur cet appareil. Le chargement de la démonstration remplace les données actuelles.") },
+            onDismissRequest = { showDemoConfirmation = false },
+            title = { Text("Charger la démonstration ?") },
+            text = { Text("Les données d'essai seront placées dans un profil séparé. Les saisies personnelles ne seront ni modifiées ni supprimées.") },
             confirmButton = {
-                TextButton(onClick = { viewModel.loadDemo(); showSettings = false }) { Text("Charger la démonstration") }
+                TextButton(onClick = { viewModel.loadDemo(); showDemoConfirmation = false }) { Text("Charger") }
             },
             dismissButton = {
-                TextButton(onClick = { viewModel.clear(); showSettings = false }) { Text("Tout effacer", color = MaterialTheme.colorScheme.secondary) }
+                TextButton(onClick = { showDemoConfirmation = false }) { Text("Annuler") }
+            }
+        )
+    }
+    if (showClearConfirmation && activeProfile != null) {
+        AlertDialog(
+            onDismissRequest = { showClearConfirmation = false },
+            title = { Text("Effacer les saisies ?") },
+            text = { Text("Toutes les saisies du profil ${activeProfile.firstName} seront supprimées de cet appareil.") },
+            confirmButton = {
+                TextButton(onClick = { viewModel.clearActiveProfileEntries(); showClearConfirmation = false }) {
+                    Text("Effacer", color = MaterialTheme.colorScheme.secondary)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showClearConfirmation = false }) { Text("Annuler") }
             }
         )
     }

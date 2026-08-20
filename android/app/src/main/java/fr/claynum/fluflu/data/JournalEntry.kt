@@ -14,6 +14,7 @@ enum class ContextFactor(val label: String) {
 
 data class JournalEntry(
     val id: String,
+    val profileId: String,
     val kind: EntryKind,
     val at: Long,
     val name: String = "",

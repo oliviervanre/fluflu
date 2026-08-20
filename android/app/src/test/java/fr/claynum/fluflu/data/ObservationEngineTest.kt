@@ -39,8 +39,8 @@ class ObservationEngineTest {
         assertEquals(0, result.linkedExposures)
     }
 
-    private fun food(name: String, at: Long) = JournalEntry("f-$at", EntryKind.FOOD, at, name)
-    private fun symptom(at: Long, intensity: Int) = JournalEntry("s-$at", EntryKind.SYMPTOM, at, intensity = intensity)
+    private fun food(name: String, at: Long) = JournalEntry("f-$at", "profile", EntryKind.FOOD, at, name)
+    private fun symptom(at: Long, intensity: Int) = JournalEntry("s-$at", "profile", EntryKind.SYMPTOM, at, intensity = intensity)
 
     private companion object { const val HOUR = 3_600_000L }
 }
