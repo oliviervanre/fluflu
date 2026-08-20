@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">Icône FluFlu</title>
+  <rect width="512" height="512" rx="112" fill="#173F3A"/>
+  <path d="M154 112H370V184H238V232H350V302H238V400H154Z" fill="#FFFFFF"/>
+</svg>
